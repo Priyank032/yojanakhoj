@@ -120,7 +120,7 @@ async function processMessage({ phone, body, mediaUrl, messageSid, numMedia }) {
   // ── Global commands ──────────────────────────────────────────────────────
 
   if (isRestart(text)) {
-    session.state = 'welcome';
+    session.state = 'language_selection';
     session.language = null;
     session.languageCode = 'en';
     session.messages = [];
