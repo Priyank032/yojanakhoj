@@ -167,7 +167,7 @@ function SchemeCard({ scheme, sessionId, borderColor, viewLabel, language }: {
 }) {
   const name = language !== 'en' && scheme.nameHindi ? scheme.nameHindi : scheme.name;
   return (
-    <Link href={`/schemes/${scheme.schemeId}?session=${sessionId}`}>
+    <Link href={`/schemes?id=${scheme.schemeId}&session=${sessionId}`}>
       <div className={`bg-white rounded-2xl border-l-4 ${borderColor} shadow-sm p-4 flex items-start gap-3 hover:shadow-md transition-shadow`}>
         <div className="text-3xl">{getCategoryIcon(scheme.category)}</div>
         <div className="flex-1 min-w-0">

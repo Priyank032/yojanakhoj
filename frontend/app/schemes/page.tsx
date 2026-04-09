@@ -1,6 +1,6 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { useParams, useSearchParams, useRouter } from 'next/navigation';
+import { useEffect, useState, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
 import { formatINR } from '@/lib/utils';
 import { useQuizStore } from '@/lib/store';
@@ -8,11 +8,10 @@ import { useT } from '@/lib/translations';
 
 type Tab = 'what' | 'how' | 'docs';
 
-export default function SchemeDetailPage() {
-  const params = useParams();
+function SchemeDetail() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const schemeId = params.schemeId as string;
+  const schemeId = searchParams.get('id') || '';
   const sessionId = searchParams.get('session') || undefined;
 
   const { language } = useQuizStore();
@@ -23,11 +22,12 @@ export default function SchemeDetailPage() {
   const [checkedDocs, setCheckedDocs] = useState<Set<string>>(new Set());
 
   useEffect(() => {
+    if (!schemeId) { router.push('/'); return; }
     api.getScheme(schemeId, sessionId).then(data => {
       setScheme(data);
       setLoading(false);
     }).catch(() => setLoading(false));
-  }, [schemeId, sessionId]);
+  }, [schemeId, sessionId, router]);
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center">
@@ -213,5 +213,17 @@ export default function SchemeDetailPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function SchemePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-green-600 border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <SchemeDetail />
+    </Suspense>
   );
 }
