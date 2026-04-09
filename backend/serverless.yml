@@ -1,0 +1,85 @@
+service: yojanakhoj-backend
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ap-south-1          # Mumbai — lowest latency for India
+  memorySize: 512
+  timeout: 30
+  environment:
+    MONGODB_URI: ${env:MONGODB_URI}
+    OPENAI_API_KEY: ${env:OPENAI_API_KEY}
+    TWILIO_ACCOUNT_SID: ${env:TWILIO_ACCOUNT_SID}
+    TWILIO_AUTH_TOKEN: ${env:TWILIO_AUTH_TOKEN}
+    TWILIO_WHATSAPP_NUMBER: ${env:TWILIO_WHATSAPP_NUMBER}
+  httpApi:
+    cors:
+      allowedOrigins:
+        - https://main.${env:AMPLIFY_APP_ID}.amplifyapp.com
+        - https://yojanakhoj.in
+        - http://localhost:3000
+      allowedHeaders:
+        - Content-Type
+        - Authorization
+      allowedMethods:
+        - GET
+        - POST
+        - OPTIONS
+
+functions:
+  quizStart:
+    handler: functions/quiz/handler.start
+    events:
+      - httpApi:
+          path: /quiz/start
+          method: POST
+
+  quizAnswer:
+    handler: functions/quiz/handler.answer
+    events:
+      - httpApi:
+          path: /quiz/answer
+          method: POST
+
+  matchSchemes:
+    handler: functions/matcher/handler.match
+    timeout: 60           # GPT-4o can take up to 30s
+    memorySize: 1024
+    events:
+      - httpApi:
+          path: /match/schemes
+          method: POST
+
+  getScheme:
+    handler: functions/schemes/handler.getScheme
+    timeout: 30
+    events:
+      - httpApi:
+          path: /schemes/{schemeId}
+          method: GET
+
+  generateReport:
+    handler: functions/report/handler.generate
+    timeout: 30
+    memorySize: 1024
+    events:
+      - httpApi:
+          path: /report/generate
+          method: POST
+
+  whatsappWebhook:
+    handler: functions/whatsapp/lambda.handler
+    timeout: 3            # Twilio needs response < 5s; processing is async
+    events:
+      - httpApi:
+          path: /whatsapp/incoming
+          method: POST
+
+plugins:
+  - serverless-offline
+
+custom:
+  serverless-offline:
+    httpPort: 4000
