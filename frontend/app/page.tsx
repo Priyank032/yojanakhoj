@@ -17,7 +17,7 @@ export default function Home() {
 
   const stats = [
     { value: '₹1.2L+', label: tr.stat_benefit },
-    { value: '20+',    label: tr.stat_schemes },
+    { value: '100%',   label: tr.stat_schemes },
     { value: '3 min',  label: tr.stat_time },
   ];
 

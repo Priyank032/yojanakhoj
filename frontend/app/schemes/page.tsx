@@ -19,7 +19,11 @@ function SchemeDetail() {
   const [scheme, setScheme] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<Tab>('what');
-  const [checkedDocs, setCheckedDocs] = useState<Set<string>>(new Set());
+  const storageKey = `docs-${schemeId}`;
+  const [checkedDocs, setCheckedDocs] = useState<Set<string>>(() => {
+    if (typeof window === 'undefined') return new Set();
+    try { return new Set(JSON.parse(localStorage.getItem(storageKey) || '[]')); } catch { return new Set(); }
+  });
 
   useEffect(() => {
     if (!schemeId) { router.push('/'); return; }
@@ -54,6 +58,7 @@ function SchemeDetail() {
     setCheckedDocs(prev => {
       const next = new Set(prev);
       next.has(name) ? next.delete(name) : next.add(name);
+      try { localStorage.setItem(storageKey, JSON.stringify([...next])); } catch {}
       return next;
     });
   };

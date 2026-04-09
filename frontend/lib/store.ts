@@ -25,7 +25,9 @@ export const useQuizStore = create<QuizStore>()(
       currentQuestion: null,
       isComplete: false,
       isLoading: false,
-      language: 'en',
+      language: (typeof navigator !== 'undefined'
+        ? (['hi','bn','te','mr','ta','kn','gu','pa','or'].find(c => navigator.language.startsWith(c)) as LangCode) || 'en'
+        : 'en') as LangCode,
       setSession: (id) => set({ sessionId: id }),
       setQuestion: (q) => set({ currentQuestion: q }),
       setComplete: () => set({ isComplete: true }),

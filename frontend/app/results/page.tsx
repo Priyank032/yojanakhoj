@@ -36,13 +36,23 @@ function ResultsContent() {
     if (!sessionId) { router.push('/'); return; }
     if (fetchedRef.current) return;
     fetchedRef.current = true;
+
+    const timeout = setTimeout(() => {
+      setError('Matching is taking longer than usual. Please go back and try again, or try later.');
+      setLoading(false);
+    }, 45000);
+
     api.matchSchemes(sessionId).then(res => {
+      clearTimeout(timeout);
       setResult(res);
       setLoading(false);
     }).catch(e => {
+      clearTimeout(timeout);
       setError(e.message || 'Failed to match schemes. Please try again.');
       setLoading(false);
     });
+
+    return () => clearTimeout(timeout);
   }, [sessionId, router]);
 
   const handleDownload = async () => {
