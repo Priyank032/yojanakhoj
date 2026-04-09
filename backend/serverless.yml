@@ -2,6 +2,8 @@ service: yojanakhoj-backend
 
 frameworkVersion: '3'
 
+useDotenv: true
+
 provider:
   name: aws
   runtime: nodejs20.x
@@ -17,7 +19,7 @@ provider:
   httpApi:
     cors:
       allowedOrigins:
-        - https://main.${env:AMPLIFY_APP_ID}.amplifyapp.com
+        - https://main.d35z9kd7ugwz91.amplifyapp.com
         - https://yojanakhoj.in
         - http://localhost:3000
       allowedHeaders:
